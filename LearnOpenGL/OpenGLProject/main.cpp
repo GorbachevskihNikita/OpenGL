@@ -21,11 +21,11 @@ const char* vertexShaderSource =
 
 const char* fragmentShaderSource =
     "#version 330 core\n"
-    "in vec4 vertexColor;\n"
     "out vec4 color;\n"
+    "uniform vec4 ourColor;\n"
     "void main()\n"
     "{\n"
-    "   color = vertexColor;\n"
+    "   color = ourColor;\n"
     "}\n\0";
 
 int main() 
@@ -79,7 +79,6 @@ int main()
         glGetShaderInfoLog(fragmentShader, 512, nullptr, infolog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_SHADER\n" << infolog << std::endl;
     }
-
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
@@ -109,8 +108,13 @@ int main()
         glClearColor(1.7f, 1.4f, 0.7f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-
         glUseProgram(shaderProgram);
+
+        float timeValue = glfwGetTime();
+        float greenValue = (sin(timeValue) / 2) + 0.5;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
